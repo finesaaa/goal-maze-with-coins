@@ -7,7 +7,7 @@ import java.util.Queue;
 
 import com.sophiego.shopie.Player;
 
-public class ShortestPath {
+public class OldShortestPath {
 
 	int[][][] dist;
     int[][] dp, maze;
@@ -18,7 +18,7 @@ public class ShortestPath {
     int MAXDIST = 1000 * 1000;
 
     
-	public ShortestPath(int[][] maze, Player player) {
+	public OldShortestPath(int[][] maze, Player player) {
 		this.maze = maze;
 	
 		this.src_x = player.getStartRow();

@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
 
-import com.sophiego.algos.ShortestPath;
+import com.sophiego.algos.ShortestSteps;
 import com.sophiego.gfx.Assets;
 import com.sophiego.handler.KeyboardHandler;
 import com.sophiego.helper.LevelWriter;
@@ -33,7 +33,7 @@ public class Level {
 	private Button restart, back;
 	private CoinPanel coinPanel;
 	private StepCounterPanel stepCounterPanel;
-	private ShortestPath shortestPath;
+	private ShortestSteps shortestSteps;
 	private boolean solved, played;
 	
 	private int statusLevel;
@@ -57,6 +57,7 @@ public class Level {
 		this.id = id_level;
 		
 		backup_maze = new int[maze.length][maze[0].length];
+		
 		for (int row = 0; row < maze.length; row++) {
 			for (int col = 0; col < maze[row].length; col++)
 			{
@@ -68,8 +69,8 @@ public class Level {
 				}
 			}
 			
-			shortestPath = new ShortestPath(this.maze, this.player);
-			target_num_step = shortestPath.minMoves();
+			shortestSteps = new ShortestSteps(this.maze, this.player);
+			target_num_step = shortestSteps.minMoves();
 			
 			if(this.statusLevel == 1) {
 				solved = true;

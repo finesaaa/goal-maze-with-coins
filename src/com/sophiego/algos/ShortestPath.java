@@ -1,4 +1,4 @@
-package com.sophiego.algo;
+package com.sophiego.algos;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -14,12 +14,12 @@ import com.sophiego.shopie.Player;
 public class AlgorithmMain {
 	public static void main(String[] args) {
 		
-		String file = getFile(10);
+		String file = getFile(12);
 		String[] numbers = file.split("\\s+");
 		
 		int cols = parseInt(numbers[1]);
 		int rows = parseInt(numbers[2]);
-	
+
 		int player_col = parseInt(numbers[3]);
 		int player_row = parseInt(numbers[4]);
 		Player player = new Player(player_row, player_col);
@@ -37,41 +37,9 @@ public class AlgorithmMain {
 		
 		ShortestSteps shortestPath = new ShortestSteps(maze, player);
 		System.out.println(shortestPath.minMoves());
-		
-		// GA
-        Random rn = new Random();
 
-        GeneticAlgorithm demo = new GeneticAlgorithm();
-
-        // Initialize population
-        demo.population.initializeIndividual(shortestPath.getPaths().length, shortestPath.getPaths());
-
-        // Calculate fitness of each individual
-        demo.population.calculateFitness();
-
-        // While population gets an individual with maximum fitness
-        while (demo.generationCount < 100) {
-            ++demo.generationCount;
-
-            // Do mutation under a random probability
-            if (rn.nextInt() % 7 < 5) {
-                demo.mutation();
-            }
-
-            // Add fittest offspring to population
-            demo.addFittestOffspring();
-
-            // Calculate new fitness value
-            demo.population.calculateFitness();
-        }
-
-        System.out.println("\nSolution found in generation " + demo.generationCount);
-        System.out.println("Fitness: "+demo.population.getFittest().fitness);
-        System.out.print("Genes: ");
-        
-        demo.population.getFittest().printGenes();
-
-        System.out.println("");
+        GeneticAlgorithm ga = new GeneticAlgorithm(maze, player);
+		System.out.println(ga.minMoves());
 	}
 	
 	public static String getFile(int level) {

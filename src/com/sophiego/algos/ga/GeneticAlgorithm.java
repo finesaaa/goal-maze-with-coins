@@ -3,21 +3,58 @@ package com.sophiego.algos.ga;
 
 import java.util.Random;
 
-public class GeneticAlgorithm {
+import com.sophiego.shopie.Player;
+import com.sophiego.algos.ShortestPath;
+
+public class GeneticAlgorithm extends ShortestPath {
 
     public Population population = new Population(100);
     Individual fittest;
     Individual secondFittest;
     public int generationCount = 0;
 
-    // Selection
+	public GeneticAlgorithm(int[][] maze, Player player) {
+		super(maze, player);
+	}
+
+	public int minMoves() {
+		int superResult = super.minMoves();
+		if (superResult != 0) {
+			return superResult;
+		}
+		
+        Random rn = new Random();
+        this.population.initializeIndividual(paths.length, paths);
+        this.population.calculateFitness();
+
+        while (this.generationCount < 100) {
+            ++this.generationCount;
+
+            if (rn.nextInt() % 7 < 5) {
+                this.mutation();
+            }
+
+            this.addFittestOffspring();
+
+            this.population.calculateFitness();
+        }
+
+        System.out.println("\nSolution found in generation " + this.generationCount);
+        System.out.println("Fitness: "+this.population.getFittest().fitness);
+        System.out.print("Genes: ");
+        
+        this.population.getFittest().printGenes();
+
+        System.out.println("");
+        
+        return this.population.getFittest().fitness;
+	}
+
     void selection() {
         System.out.println("Selection");
 
-        // Select the most fittest individual
         fittest = population.getFittest();
 
-        // Select the second most fittest individual
         secondFittest = population.getSecondFittest();
 
         fittest.printGenes();
@@ -26,7 +63,6 @@ public class GeneticAlgorithm {
         System.out.println("");
     }
 
-    // Mutation
     public void mutation() {
         Random rn = new Random();
 
@@ -42,18 +78,12 @@ public class GeneticAlgorithm {
         }
     }
 
-    // Get fittest offspring
     Individual getFittestOffspring() {
         return population.getFittest();
     }
 
-
-    // Replace least fittest individual from most fittest offspring
     public void addFittestOffspring() {
-        // Get index of least fit individual
         int mostFittestIndex = population.getMostFittestIndex();
-
-        // Replace least fittest individual from most fittest offspring
         population.individuals[mostFittestIndex] = getFittestOffspring();
     }
 }

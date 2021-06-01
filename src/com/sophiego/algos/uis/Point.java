@@ -1,5 +1,5 @@
 
-package com.sophiego.algos;
+package com.sophiego.algos.uis;
 
 public class Point {
 	int row;

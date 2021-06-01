@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
 
-import com.sophiego.algos.ShortestSteps;
+import com.sophiego.algos.uis.ShortestSteps;
 import com.sophiego.gfx.Assets;
 import com.sophiego.handler.KeyboardHandler;
 import com.sophiego.helper.LevelWriter;

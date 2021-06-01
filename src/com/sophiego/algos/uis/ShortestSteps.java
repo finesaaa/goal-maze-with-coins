@@ -1,4 +1,4 @@
-package com.sophiego.algos;
+package com.sophiego.algos.uis;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,6 +15,7 @@ public class ShortestSteps {
 
 	private Point src, dst, curr;
 	private int[][] maze;
+	private int[][] paths;
 
 	public ShortestSteps(int[][] maze, Player player) {
 		this.maze = maze;
@@ -25,30 +26,33 @@ public class ShortestSteps {
 	}
 
 	public int minMoves() {
-		if (shortestPath(this.src, this.dst) == Integer.MAX_VALUE)
+		if (shortestPath(this.src, this.dst) == Integer.MAX_VALUE) {
 			return -1;
+		}
 
 		// Locate the Coins O(n^2)
 		HashMap<Integer, Point> coins = new HashMap<Integer, Point>(8);
 		coins.put(0, this.src); // Add Sophie
+		
 		this.coinCount++;
 		for (int row = 0; row < this.maze.length; row++) {
 			for (int col = 0; col < this.maze[0].length; col++) {
-//				System.out.println(this.maze[row][col] + " " + this.maze.length + " - row :" + row + " - col :" + col);
 				if (this.maze[row][col] == 3) {
 					coins.put(this.coinCount, new Point(row, col));
 					this.coinCount++;
 				}
 			}
 		}
+		
 		coins.put(this.coinCount, this.dst);
 		this.coinCount++; // Number of coins plus 2 (Sophie and Flag)
 
-		if (this.coinCount == 3)
+		if (this.coinCount == 3) {
 			return shortestPath(this.src, this.dst);
+		}
 
 		// Generate Graph ~O(k(k + 1)/2) = ~O(k^2)
-		int[][] paths = new int[this.coinCount][this.coinCount];
+		paths = new int[this.coinCount][this.coinCount];
 		// Sophie: Index 0, Flag: Index coinCount - 1
 		for (int i = 0; i < paths.length; i++) {
 			for (int j = i; j < paths.length; j++) {
@@ -66,6 +70,15 @@ public class ShortestSteps {
 			}
 		}
 
+		System.out.println("");
+		for (int i = 0; i < paths.length; i++) {
+			for (int j = 0; j < paths.length; j++) {
+				System.out.print(paths[i][j]);
+			}
+			System.out.println("");
+		}
+		System.out.println("");
+
 		// Ensure No Path Between Sophie and Flag
 		paths[0][this.coinCount - 1] = Integer.MAX_VALUE; // No Sophie to Flag
 		paths[this.coinCount - 1][0] = Integer.MAX_VALUE; // No Flag to Sophie
@@ -78,6 +91,10 @@ public class ShortestSteps {
 		int distance = 0;
 		permutePaths(0, visited, paths, route, distance, 1);
 		return this.shortestDistance;
+	}
+	
+	public int[][] getPaths(){
+		return paths;
 	}
 
 	/**

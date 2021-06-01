@@ -59,8 +59,22 @@ public class ShortestPath {
         }
 
         dist = new int[this.row][this.col][numCoins];
-        for (int i = 0; i < numCoins; i++) 
+        for (int i = 0; i < numCoins; i++) { 
         	setDistances(i);
+        	
+        	int[] coin = this.coins.get(i);
+        	System.out.println("Path untuk coin ke-" + i + " pada titik (" + coin[0] + ", " + coin[1] + ")");
+    		for(int row = 0; row < this.row; row++) {
+    			for(int col = 0; col < this.col; col++) {
+    				if (this.maze[row][col] == 1) {
+        				System.out.print("*");
+    				} else {
+    					System.out.print(this.dist[row][col][i]);
+    				}
+    			}
+    			System.out.println("");
+    		}
+        }
 
         // solve recursively!
         int ans = getMinDist(0, 1);
@@ -112,9 +126,7 @@ public class ShortestPath {
                     visited[newR][newC] = true;
                     dist[newR][newC][coin] = dist[oldR][oldC][coin] + 1;
                     q.add(newPoint);
-
                 }
-
             }
         }
     }
@@ -144,9 +156,4 @@ public class ShortestPath {
 //        System.out.println("coin = " + coin + " seq = " + " res = " + res);
         return res;
     }
-
-    
-
-
-
 }

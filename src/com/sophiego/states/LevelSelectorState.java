@@ -40,8 +40,11 @@ public class LevelSelectorState extends State{
 		
 		loader = new LevelLoader(this);
 		
-		for(int id = 0; id < NUMLEVEL; id++)
+		for(int id = 0; id < NUMLEVEL; id++) {
+//			System.out.println("LEVEL " + id);
 			levels[id] = loader.loadLevel("/levels/" + id + ".txt", id);
+		}
+			
 		
 		int counter = 0;
 		for(int i = 0; i < 3; i++) {

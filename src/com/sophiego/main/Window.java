@@ -195,6 +195,8 @@ public class Window extends JFrame implements Runnable {
 		return congratsState;
 	}
 	
+	
+	
 	public CreditState getCreditState() {
 		return creditState;
 	}

@@ -26,7 +26,14 @@ public class MenuState extends State {
 			}
 		}, Assets.font30,Assets.mColor));
 
-		buttons.add(new Button("Exit", Window.WIDTH/2 + 100, Window.HEIGHT/2 + 125, new Click(){
+		buttons.add(new Button("Random Play", Window.WIDTH/2 + 100, Window.HEIGHT/2 + 125, new Click(){
+			@Override
+			public void onClick() {
+				State.currentState = window.getCreditState();
+			}
+		}, Assets.font30, new Color(176, 224, 175)));
+		
+		buttons.add(new Button("Exit",Window.WIDTH -100, Window.HEIGHT - 100, new Click(){
 			@Override
 			public void onClick() {
 				int choose = JOptionPane.showConfirmDialog(null, 
@@ -35,12 +42,6 @@ public class MenuState extends State {
 					System.exit(1);
 			}
 		}, Assets.font30,Assets.sColor));
-		buttons.add(new Button("BY", Window.WIDTH -100, Window.HEIGHT - 100 , new Click(){
-			@Override
-			public void onClick() {
-				State.currentState = window.getCreditState();
-			}
-		}, Assets.font30, new Color(176, 224, 175)));
 
 	}
 

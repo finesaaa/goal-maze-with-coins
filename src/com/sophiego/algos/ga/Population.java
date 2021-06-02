@@ -75,7 +75,7 @@ public class Population {
         return maxFitIndex;
     }
 
-    //Calculate fitness of each individual
+    // Calculate fitness of each individual
     public void calculateFitness() {
         for (int i = 0; i < individuals.length; i++) {
             individuals[i].calcFitness();

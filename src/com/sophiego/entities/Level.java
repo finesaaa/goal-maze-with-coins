@@ -177,8 +177,7 @@ public class Level {
 			time = 0;
 			lastTime = System.currentTimeMillis();
 		}
-	}
-	
+	}	
 
 	private void reset() {
 		for(int row = 0; row < maze.length; row++)

@@ -97,7 +97,8 @@ public class RandomPlayState extends State {
 		back.update();
 		play.update();
 		
-		maze = new int[ThreadLocalRandom.current().nextInt(8,12)][ThreadLocalRandom.current().nextInt(8,12)];
+		int size = ThreadLocalRandom.current().nextInt(8,12);
+		maze = new int[size][size];
 				
 		int row =  maze.length;
 		int col =  maze[0].length;

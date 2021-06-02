@@ -14,7 +14,7 @@ import com.sophiego.shopie.Player;
 public class AlgorithmMain {
 	public static void main(String[] args) {
 		
-		String file = getFile(0);
+		String file = getFile(1);
 		String[] numbers = file.split("\\s+");
 		
 		int cols = parseInt(numbers[1]);

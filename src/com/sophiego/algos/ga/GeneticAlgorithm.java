@@ -61,8 +61,8 @@ public class GeneticAlgorithm extends ShortestPath {
 
         System.out.println("\nSolution found in generation " + generationCount);
         System.out.println("Fitness: "+ this.population.getFittest().fitness);
-        System.out.print("Genes: ");
         
+        System.out.print("Genes: ");
         this.population.getFittest().printGenes();
 
         System.out.println("");

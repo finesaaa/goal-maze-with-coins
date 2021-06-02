@@ -12,7 +12,7 @@ import com.sophiego.main.Window;
 import com.sophiego.ui.Button;
 import com.sophiego.ui.Click;
 
-public class CreditState extends State {
+public class RandomPlayState extends State {
 	private final int DOUBLETILESIZE = 80;
 	private final int SPACE = 10;
 	private Button back, play;
@@ -27,10 +27,10 @@ public class CreditState extends State {
 	private final int xOffset = (Window.WIDTH - (DOUBLETILESIZE + SPACE * 4)*5)/2;
 	private final int yOffset = (Window.HEIGHT - (DOUBLETILESIZE + SPACE * 2)*3)/2;
 
-	public CreditState(Window window) {
+	public RandomPlayState(Window window) {
 		super(window);
 		
-		State.currentState = window.getCreditState();
+		State.currentState = window.getRandomPlayState();
 		
 		back = new Button("Back To Menu", Window.WIDTH/2, Window.HEIGHT - 100, new Click() {
 			
@@ -96,6 +96,9 @@ public class CreditState extends State {
 	public void update() {
 		back.update();
 		play.update();
+		
+		maze = new int[ThreadLocalRandom.current().nextInt(8,12)][ThreadLocalRandom.current().nextInt(8,12)];
+				
 		int row =  maze.length;
 		int col =  maze[0].length;
 		Random rn = new Random();

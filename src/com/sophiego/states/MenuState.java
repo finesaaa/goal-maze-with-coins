@@ -29,7 +29,7 @@ public class MenuState extends State {
 		buttons.add(new Button("Random Play", Window.WIDTH/2 + 100, Window.HEIGHT/2 + 125, new Click(){
 			@Override
 			public void onClick() {
-				State.currentState = window.getCreditState();
+				State.currentState = window.getRandomPlayState();
 			}
 		}, Assets.font30, new Color(176, 224, 175)));
 		

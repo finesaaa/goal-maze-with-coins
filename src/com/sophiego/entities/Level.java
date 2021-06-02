@@ -13,7 +13,7 @@ import com.sophiego.helper.LevelWriter;
 import com.sophiego.helper.SoundLoader;
 import com.sophiego.main.Window;
 import com.sophiego.shopie.Player;
-import com.sophiego.states.CreditState;
+import com.sophiego.states.RandomPlayState;
 import com.sophiego.states.LevelSelectorState;
 import com.sophiego.states.State;
 import com.sophiego.ui.*;
@@ -24,6 +24,7 @@ public class Level {
 	
 	private int[][] maze;
 	private int[][] backup_maze;
+	private int currentState = 0;
 	
 	private int num_coin, target_num_coin, num_step, target_num_step;
 	
@@ -48,7 +49,7 @@ public class Level {
 	private Player player;
 	
 	public Level(int[][] maze, int id_level, int player_row, int player_col, int status_level, LevelSelectorState levelSelectorState) {
-		
+		this.currentState = 0;
 		this.levelSelectorState = (LevelSelectorState) levelSelectorState;
 		player = new Player(player_row, player_col);
 
@@ -112,9 +113,10 @@ public class Level {
 		}
 	}
 	
-	public Level(int[][] maze, int id_level, int player_row, int player_col, int status_level, CreditState levelSelectorState) {
-		
-		this.levelSelectorState = (CreditState) levelSelectorState;
+	public Level(int[][] maze, int id_level, int player_row, int player_col, int status_level, RandomPlayState levelSelectorState) 
+	{
+		this.currentState = 1;
+		this.levelSelectorState = (RandomPlayState) levelSelectorState;
 		player = new Player(player_row, player_col);
 
 		this.statusLevel = status_level;
@@ -230,29 +232,52 @@ public class Level {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					((CreditState) levelSelectorState).showGameOver();
+					if(this.currentState == 0) ((RandomPlayState) levelSelectorState).showGameOver();
+					else if(this.currentState == 0) ((RandomPlayState) levelSelectorState).showGameOver();
 					reset();
 				}
 				if(maze[row][col] == 3 || maze[row][col] == 5) return;
 			}
 	
-		((CreditState) levelSelectorState).getLevels()[id].setPlayed(true);
-		((CreditState) levelSelectorState).getLevels()[id].setSolved(true);
-		if (((CreditState) levelSelectorState).getLevels()[id].isSolved()) {
-			State.currentLevel = id + 1;
-			try {
-				LevelWriter.writeToPosition("./res/levels/"+(State.currentLevel - 1) + ".txt", "1", 0);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(this.currentState == 0) {
+			((LevelSelectorState) levelSelectorState).getLevels()[id].setPlayed(true);
+			((LevelSelectorState) levelSelectorState).getLevels()[id].setSolved(true);
+			if (((LevelSelectorState) levelSelectorState).getLevels()[id].isSolved()) {
+				State.currentLevel = id + 1;
+				try {
+					LevelWriter.writeToPosition("./res/levels/"+(State.currentLevel - 1) + ".txt", "1", 0);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (id == (((LevelSelectorState) levelSelectorState).getNUMLEVEL() - 1)) {
+					SoundLoader.playSound("game_complete_sound.wav", 100, false);
+					((LevelSelectorState) levelSelectorState).showCongratsState();
+				} else {
+					SoundLoader.playSound("level_complete_sound.wav", 100, false);
+					((LevelSelectorState) levelSelectorState).getLevels()[State.currentLevel].setPlayed(true);
+					((LevelSelectorState) levelSelectorState).showResult();
+				}
 			}
-			if (id == (((CreditState) levelSelectorState).getNUMLEVEL() - 1)) {
-				SoundLoader.playSound("game_complete_sound.wav", 100, false);
-				((CreditState) levelSelectorState).showCongratsState();
-			} else {
-				SoundLoader.playSound("level_complete_sound.wav", 100, false);
-				((CreditState) levelSelectorState).getLevels()[State.currentLevel].setPlayed(true);
-				((CreditState) levelSelectorState).showResult();
+		}  else if (this.currentState == 1) {
+			((RandomPlayState) levelSelectorState).getLevels()[id].setPlayed(true);
+			((RandomPlayState) levelSelectorState).getLevels()[id].setSolved(true);
+			if (((RandomPlayState) levelSelectorState).getLevels()[id].isSolved()) {
+				State.currentLevel = id + 1;
+				try {
+					LevelWriter.writeToPosition("./res/levels/"+(State.currentLevel - 1) + ".txt", "1", 0);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (id == (((RandomPlayState) levelSelectorState).getNUMLEVEL() - 1)) {
+					SoundLoader.playSound("game_complete_sound.wav", 100, false);
+					((RandomPlayState) levelSelectorState).showCongratsState();
+				} else {
+					SoundLoader.playSound("level_complete_sound.wav", 100, false);
+					((RandomPlayState) levelSelectorState).getLevels()[State.currentLevel].setPlayed(true);
+					((RandomPlayState) levelSelectorState).showResult();
+				}
 			}
 		}
 	}
@@ -312,7 +337,11 @@ public class Level {
 
 	public void tryAgainLevel(int id_level) {
 		reset();
-		((CreditState) levelSelectorState).playThisLevel(id_level);
+		if (this.currentState == 0) {
+			((LevelSelectorState) levelSelectorState).playThisLevel(id_level);
+		} else if (this.currentState == 1) {
+			((RandomPlayState) levelSelectorState).playThisLevel(id_level);
+		}
 	}
 	
 	public boolean isPlayed() {return played;};

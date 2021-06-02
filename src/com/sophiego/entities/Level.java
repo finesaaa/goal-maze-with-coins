@@ -312,7 +312,7 @@ public class Level {
 		g.setFont(Assets.fontLevel);
 		g.setColor(Assets.mColor);
 		fm = g.getFontMetrics();
-		g.drawString(text, Window.WIDTH/2 - fm.stringWidth(text)/2, 100);
+		g.drawString(text, Window.WIDTH/2 - fm.stringWidth(text)/2, 90);
 		
 		for (int row = 0; row < maze.length; row++) {
 			for (int col = 0;  col < maze[row].length; col++) {

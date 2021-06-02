@@ -11,7 +11,7 @@ import com.sophiego.helper.ImageLoader;
 import com.sophiego.main.Window;
 
 public class Assets {
-	public static final int TILESIZE = 48;
+	public static final int TILESIZE = 36;
 	public static final int LOGOSIZE = 200;
 	public static final Color mColor = new Color(2, 167, 159); //main
 	public static final Color sColor = new Color(255, 70, 70); //secondary
@@ -50,7 +50,7 @@ public class Assets {
 		wall = ImageLoader.loadImage("/blocks/ground_redbrick.png").getScaledInstance(TILESIZE, TILESIZE, BufferedImage.SCALE_DEFAULT);
 		
 		coin = ImageLoader.loadImage("/blocks/coin.png").getScaledInstance(Level.TILESIZE, Level.TILESIZE, BufferedImage.SCALE_DEFAULT);
-		flag = ImageLoader.loadImage("/blocks/flag.png").getScaledInstance(64, 64, BufferedImage.SCALE_DEFAULT);
+		flag = ImageLoader.loadImage("/blocks/flag.png").getScaledInstance(48, 48, BufferedImage.SCALE_DEFAULT);
 		
 		star = ImageLoader.loadImage("/blocks/star.png").getScaledInstance(64, 64, BufferedImage.SCALE_DEFAULT);
 		star_outline = ImageLoader.loadImage("/blocks/star_outline.png").getScaledInstance(64, 64, BufferedImage.SCALE_DEFAULT);

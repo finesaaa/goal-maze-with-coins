@@ -14,7 +14,7 @@ import com.sophiego.handler.KeyboardHandler;
 import com.sophiego.handler.MouseHandler;
 import com.sophiego.helper.SoundLoader;
 import com.sophiego.states.CongratsState;
-import com.sophiego.states.CreditState;
+import com.sophiego.states.RandomPlayState;
 import com.sophiego.states.GameOverState;
 import com.sophiego.states.GameState;
 import com.sophiego.states.LevelSelectorState;
@@ -45,7 +45,7 @@ public class Window extends JFrame implements Runnable {
 	private ResultState resultState;
 	private GameOverState gameOverState;
 	private CongratsState congratsState;
-	private CreditState creditState;
+	private RandomPlayState randomPlayState;
 	
 	private KeyboardHandler keyBoard;
 	private MouseHandler mouseManager;
@@ -124,7 +124,7 @@ public class Window extends JFrame implements Runnable {
 		resultState = new ResultState(this);
 		gameOverState = new GameOverState(this);
 		congratsState = new CongratsState(this);
-		creditState = new CreditState(this);
+		randomPlayState = new RandomPlayState(this);
 		State.currentState = loadingState;
 	}
 
@@ -195,7 +195,9 @@ public class Window extends JFrame implements Runnable {
 		return congratsState;
 	}
 	
-	public CreditState getCreditState() {
-		return creditState;
+	
+	
+	public RandomPlayState getRandomPlayState() {
+		return randomPlayState;
 	}
 }

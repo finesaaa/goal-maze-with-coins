@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
 
+import com.sophiego.algos.ga.GeneticAlgorithm;
 import com.sophiego.algos.uis.ShortestSteps;
 import com.sophiego.gfx.Assets;
 import com.sophiego.handler.KeyboardHandler;
@@ -12,16 +13,18 @@ import com.sophiego.helper.LevelWriter;
 import com.sophiego.helper.SoundLoader;
 import com.sophiego.main.Window;
 import com.sophiego.shopie.Player;
+import com.sophiego.states.RandomPlayState;
 import com.sophiego.states.LevelSelectorState;
 import com.sophiego.states.State;
 import com.sophiego.ui.*;
 
 public class Level {
 
-	public static final int TILESIZE = 48;
+	public static final int TILESIZE = 36;
 	
 	private int[][] maze;
 	private int[][] backup_maze;
+	private int currentState = 0;
 	
 	private int num_coin, target_num_coin, num_step, target_num_step;
 	
@@ -33,11 +36,12 @@ public class Level {
 	private Button restart, back;
 	private CoinPanel coinPanel;
 	private StepCounterPanel stepCounterPanel;
-	private ShortestSteps shortestSteps;
+	private ShortestSteps shortestPath;
+	private GeneticAlgorithm ga;
 	private boolean solved, played;
 	
 	private int statusLevel;
-	private LevelSelectorState levelSelectorState;
+	private State levelSelectorState;
 	
 	private int id;
 	private FontMetrics fm;
@@ -45,9 +49,9 @@ public class Level {
 	private Player player;
 	
 	public Level(int[][] maze, int id_level, int player_row, int player_col, int status_level, LevelSelectorState levelSelectorState) {
-		
+		this.currentState = 0;
+		this.levelSelectorState = (LevelSelectorState) levelSelectorState;
 		player = new Player(player_row, player_col);
-		this.levelSelectorState = levelSelectorState;
 
 		this.statusLevel = status_level;
 		this.maze = maze;
@@ -69,8 +73,8 @@ public class Level {
 				}
 			}
 			
-			shortestSteps = new ShortestSteps(this.maze, this.player);
-			target_num_step = shortestSteps.minMoves();
+	        ga = new GeneticAlgorithm(this.maze, this.player);
+			target_num_step = ga.minMoves();
 			
 			if(this.statusLevel == 1) {
 				solved = true;
@@ -109,6 +113,73 @@ public class Level {
 		}
 	}
 	
+	public Level(int[][] maze, int id_level, int player_row, int player_col, int status_level, RandomPlayState levelSelectorState) 
+	{
+		this.currentState = 1;
+		this.levelSelectorState = (RandomPlayState) levelSelectorState;
+		player = new Player(player_row, player_col);
+
+		this.statusLevel = status_level;
+		this.maze = maze;
+		this.num_coin = 0;
+		this.target_num_coin = 0;
+		this.num_step = 0;
+		this.id = id_level;
+		
+		backup_maze = new int[maze.length][maze[0].length];
+		
+		for (int row = 0; row < maze.length; row++) {
+			for (int col = 0; col < maze[row].length; col++)
+			{
+				backup_maze[row][col] = maze[row][col];
+				if (maze[row][col] == 3) this.target_num_coin++;
+				if (maze[row][col] == 5) {
+					player.setEndRow(row);
+					player.setEndCol(col);
+				}
+			}
+			
+	        ga = new GeneticAlgorithm(this.maze, this.player);
+			target_num_step = ga.minMoves();
+			
+			if(this.statusLevel == 1) {
+				solved = true;
+				played = true;
+			} else if (this.statusLevel == 0){
+				if (id_level == 0) played = true;
+				if (id_level > 0) 
+					if(levelSelectorState.getLevels()[id_level - 1].isSolved()) 
+						played = true;
+				solved = false;
+			}
+			
+			xOffset = (Window.WIDTH - maze[0].length * TILESIZE)/2;
+			yOffset = (Window.HEIGHT - maze.length * TILESIZE)/2;
+			
+			restart = new Button("Restart", 100, Window.HEIGHT/2, new Click(){
+				@Override
+				public void onClick() {
+					reset();
+				}}, Assets.font22, Assets.sColor);
+			back = new Button("Back", Window.WIDTH - 100, Window.HEIGHT/2, new Click() {
+				@Override
+				public void onClick() {
+					try {
+						Thread.sleep(600);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					State.currentState = levelSelectorState;
+				}
+			}, Assets.font22, Assets.bColor);
+			coinPanel = new CoinPanel("Coin: ", num_coin, target_num_coin, 80, 50, Assets.font30);
+			stepCounterPanel = new StepCounterPanel("Energy: ", num_step, target_num_step, Window.WIDTH - 130, 52, Assets.font20);
+			time = 0;
+			lastTime = System.currentTimeMillis();
+		}
+	}
+	
+
 	private void reset() {
 		for(int row = 0; row < maze.length; row++)
 			for(int col = 0; col < maze[row].length; col++)
@@ -151,39 +222,62 @@ public class Level {
 		for(int row = 0; row < maze.length; row++)
 			for(int col = 0; col < maze[row].length; col++)
 			{
-				if (num_step == target_num_step) {
+				if (num_step == target_num_step && target_num_step != -1) {
 					player.dead();
 				}
-				if(num_step > target_num_step) {
+				if(num_step > target_num_step && target_num_step != -1) {
 					SoundLoader.playSound("game_over_sound.wav", 100, false);
 					try {
 						Thread.sleep(400);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					levelSelectorState.showGameOver();
+					if(this.currentState == 0) ((RandomPlayState) levelSelectorState).showGameOver();
+					else if(this.currentState == 0) ((RandomPlayState) levelSelectorState).showGameOver();
 					reset();
 				}
 				if(maze[row][col] == 3 || maze[row][col] == 5) return;
 			}
 	
-		levelSelectorState.getLevels()[id].setPlayed(true);
-		levelSelectorState.getLevels()[id].setSolved(true);
-		if (levelSelectorState.getLevels()[id].isSolved()) {
-			State.currentLevel = id + 1;
-			try {
-				LevelWriter.writeToPosition("./res/levels/"+(State.currentLevel - 1) + ".txt", "1", 0);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(this.currentState == 0) {
+			((LevelSelectorState) levelSelectorState).getLevels()[id].setPlayed(true);
+			((LevelSelectorState) levelSelectorState).getLevels()[id].setSolved(true);
+			if (((LevelSelectorState) levelSelectorState).getLevels()[id].isSolved()) {
+				State.currentLevel = id + 1;
+				try {
+					LevelWriter.writeToPosition("./res/levels/"+(State.currentLevel - 1) + ".txt", "1", 0);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (id == (((LevelSelectorState) levelSelectorState).getNUMLEVEL() - 1)) {
+					SoundLoader.playSound("game_complete_sound.wav", 100, false);
+					((LevelSelectorState) levelSelectorState).showCongratsState();
+				} else {
+					SoundLoader.playSound("level_complete_sound.wav", 100, false);
+					((LevelSelectorState) levelSelectorState).getLevels()[State.currentLevel].setPlayed(true);
+					((LevelSelectorState) levelSelectorState).showResult();
+				}
 			}
-			if (id == (levelSelectorState.getNUMLEVEL() - 1)) {
-				SoundLoader.playSound("game_complete_sound.wav", 100, false);
-				levelSelectorState.showCongratsState();
-			} else {
-				SoundLoader.playSound("level_complete_sound.wav", 100, false);
-				levelSelectorState.getLevels()[State.currentLevel].setPlayed(true);
-				levelSelectorState.showResult();
+		}  else if (this.currentState == 1) {
+			((RandomPlayState) levelSelectorState).getLevels()[id].setPlayed(true);
+			((RandomPlayState) levelSelectorState).getLevels()[id].setSolved(true);
+			if (((RandomPlayState) levelSelectorState).getLevels()[id].isSolved()) {
+				State.currentLevel = id + 1;
+				try {
+					LevelWriter.writeToPosition("./res/levels/"+(State.currentLevel - 1) + ".txt", "1", 0);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (id == (((RandomPlayState) levelSelectorState).getNUMLEVEL() - 1)) {
+					SoundLoader.playSound("game_complete_sound.wav", 100, false);
+					((RandomPlayState) levelSelectorState).showCongratsState();
+				} else {
+					SoundLoader.playSound("level_complete_sound.wav", 100, false);
+					((RandomPlayState) levelSelectorState).getLevels()[State.currentLevel].setPlayed(true);
+					((RandomPlayState) levelSelectorState).showResult();
+				}
 			}
 		}
 	}
@@ -218,7 +312,7 @@ public class Level {
 		g.setFont(Assets.fontLevel);
 		g.setColor(Assets.mColor);
 		fm = g.getFontMetrics();
-		g.drawString(text, Window.WIDTH/2 - fm.stringWidth(text)/2, 75);
+		g.drawString(text, Window.WIDTH/2 - fm.stringWidth(text)/2, 90);
 		
 		for (int row = 0; row < maze.length; row++) {
 			for (int col = 0;  col < maze[row].length; col++) {
@@ -243,7 +337,11 @@ public class Level {
 
 	public void tryAgainLevel(int id_level) {
 		reset();
-		levelSelectorState.playThisLevel(id_level);
+		if (this.currentState == 0) {
+			((LevelSelectorState) levelSelectorState).playThisLevel(id_level);
+		} else if (this.currentState == 1) {
+			((RandomPlayState) levelSelectorState).playThisLevel(id_level);
+		}
 	}
 	
 	public boolean isPlayed() {return played;};

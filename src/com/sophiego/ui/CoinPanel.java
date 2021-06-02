@@ -28,7 +28,7 @@ public class CoinPanel {
 	}
 	
 	public void render(Graphics g){
-		int radius = 13;
+		int radius = 8;
 		int space = 8;
 		g.setFont(font);
 		g.setColor(Assets.mColor);

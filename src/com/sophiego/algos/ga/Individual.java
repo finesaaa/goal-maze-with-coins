@@ -20,6 +20,7 @@ public class Individual  implements Cloneable {
         this.genes = new int[size];
         this.fitness = 0;
         this.nodesCost = new int[path.length][path[0].length];
+        this.nodesCost = path;
         
         //Set genes randomly for each individual
         this.genes[0] = this.startNode;
@@ -32,8 +33,6 @@ public class Individual  implements Cloneable {
         	}
         }
         this.genes[size - 1] = this.endNode;
-        
-        this.nodesCost = path;
     }
     
     private boolean verifyGene(int size, int node) {

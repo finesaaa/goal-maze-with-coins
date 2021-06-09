@@ -140,6 +140,9 @@ public class Level {
 			}
 			
 	        ga = new GeneticAlgorithm(this.maze, this.player);
+	        ga.setParameter(this.maze.length * this.maze[0].length * 10,
+	        		this.maze.length * this.maze[0].length * 10,
+	        		this.maze.length * this.maze[0].length * 10);
 			target_num_step = ga.minMoves();
 			
 			if(this.statusLevel == 1) {
@@ -231,8 +234,8 @@ public class Level {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					if(this.currentState == 0) ((RandomPlayState) levelSelectorState).showGameOver();
-					else if(this.currentState == 0) ((RandomPlayState) levelSelectorState).showGameOver();
+					if(this.currentState == 0) ((LevelSelectorState) levelSelectorState).showGameOver();
+					else if(this.currentState == 1) ((RandomPlayState) levelSelectorState).showGameOver();
 					reset();
 				}
 				if(maze[row][col] == 3 || maze[row][col] == 5) return;
@@ -274,7 +277,7 @@ public class Level {
 					((RandomPlayState) levelSelectorState).showCongratsState();
 				} else {
 					SoundLoader.playSound("level_complete_sound.wav", 100, false);
-					((RandomPlayState) levelSelectorState).getLevels()[State.currentLevel].setPlayed(true);
+					((RandomPlayState) levelSelectorState).getLevels()[State.currentLevel - 1].setPlayed(true);
 					((RandomPlayState) levelSelectorState).showResult();
 				}
 			}

@@ -7,75 +7,17 @@ import java.util.Queue;
 import com.sophiego.algos.uis.Point;
 import com.sophiego.shopie.Player;
 
-public class ShortestPath {
+public class ShortestPathViz {
 	
 	public int coinCount = 0;
 	public Point src, dst;
 	public int[][] maze;
-	public int[][] newMaze;
-	public int[][] paths;
+	public int[] sequence;
+	public int step = 0;
 
-	public ShortestPath(int[][] maze, Player player) {
+	public ShortestPathViz(int[][] maze, int[] sequence) {
 		this.maze = maze;
-		this.newMaze = maze;
-
-		this.src = new Point(player.getStartRow(), player.getStartCol());
-		this.dst = new Point(player.getEndRow(), player.getEndCol());
-	}
-
-	public int minMoves() {
-		if (shortestPath(this.src, this.dst) == Integer.MAX_VALUE) {
-			return -1;
-		}
-
-		// Locate the Coins O(n^2)
-		HashMap<Integer, Point> coins = new HashMap<Integer, Point>(8);
-		coins.put(0, this.src); // Add Sophie
-		this.newMaze[src.row][src.col] = 1;
-		
-		this.coinCount++;
-		for (int row = 0; row < this.maze.length; row++) {
-			for (int col = 0; col < this.maze[0].length; col++) {
-				if (this.maze[row][col] == 3) {
-					this.newMaze[src.row][src.col] = this.coinCount + 1;
-					coins.put(this.coinCount, new Point(row, col));
-					this.coinCount++;
-				}
-			}
-		}
-		
-		coins.put(this.coinCount, this.dst);
-		this.newMaze[dst.row][dst.col] = this.coinCount + 1;
-		this.coinCount++; // Number of coins plus 2 (Sophie and Flag)
-
-		if (this.coinCount == 3) {
-			return shortestPath(this.src, this.dst);
-		}
-
-		// Generate Graph ~O(k(k + 1)/2) = ~O(k^2)
-		paths = new int[this.coinCount][this.coinCount];
-		// Sophie: Index 0, Flag: Index coinCount - 1
-		for (int i = 0; i < paths.length; i++) {
-			for (int j = i; j < paths.length; j++) {
-
-				if (i == j) // Loop is Zero Distance
-					paths[i][j] = 0;
-
-				else { // Compute Shortest Path Between Coins/Sophie/Flag
-					int path = shortestPath(coins.get(i), coins.get(j));
-					if (path == Integer.MAX_VALUE)
-						return -1;
-					paths[i][j] = path;
-					paths[j][i] = path;
-				}
-			}
-		}
-		
-		return 0;
-	}
-	
-	public int[][] getPaths(){
-		return paths;
+		this.sequence = sequence;
 	}
 
 	private int shortestPath(Point start, Point end) {
@@ -98,7 +40,45 @@ public class ShortestPath {
 			step(position, end, cost, positionQueue, 0, -1); // Step Up
 		}
 
+		
+
 		return cost[end.row][end.col];
+	}
+	
+	private boolean getSteps(int x, int y, Point end, int[][] cost, int steps, int counter) {
+		if (x == end.row && y == end.col && counter == steps) {
+			return true;
+		}
+		
+		boolean returnState = false;
+		counter++;
+		
+		if (x < this.maze.length && !returnState) {
+			if (cost[x + 1][y] == (counter - 1)) {
+				returnState = getSteps(x + 1, y, end, cost, steps, counter);
+				
+			}	
+		}
+
+		if (x > 0 && !returnState) {
+			if (cost[x - 1][y] == (counter - 1)) {
+				returnState = getSteps(x - 1, y, end, cost, steps, counter);	
+			}	
+		}
+		
+		if (y < this.maze[0].length && !returnState) {
+			if (cost[x][y + 1] == (counter - 1)) {
+				returnState = getSteps(x, y + 1, end, cost, steps, counter);	
+			}	
+		}
+
+		if (y > 0 && !returnState) {
+			if (cost[x][y - 1] == (counter - 1)) {
+				returnState = getSteps(x, y - 1, end, cost, steps, counter);	
+			}	
+		}
+		
+		return false;
 	}
 
 	private void step(Point position, Point end, int[][] cost, Queue<Point> positionQueue, int sr, int sc) {

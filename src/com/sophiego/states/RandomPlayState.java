@@ -15,7 +15,7 @@ import com.sophiego.ui.Click;
 public class RandomPlayState extends State {
 	private final int DOUBLETILESIZE = 80;
 	private final int SPACE = 10;
-	private Button back, play;
+	private Button back, play, randomize;
 	private FontMetrics fm;
 	private String text;
 	private Level level;
@@ -51,41 +51,16 @@ public class RandomPlayState extends State {
 			
 		}, Assets.font30, Assets.mColor);
 		
-		int row =  maze.length;
-		int col =  maze[0].length;
-		Random rn = new Random();
-		
-		for (int i = 0; i < row; i++) {
-			for (int j = 0; j < col; j++) {
-				int[] arr = {0, 1, 3};
-				int rnd = rn.nextInt(arr.length);
-				this.maze[i][j] = arr[rnd];
+		randomize = new Button("Acak", Window.WIDTH/2, Window.HEIGHT/2 + 30, new Click() {
+			
+			@Override
+			public void onClick() {
+				generateMaze();
 			}
-		}
+			
+		}, Assets.font30, Assets.mColor);
 		
-		while(true) {
-			int r = rn.nextInt(row);
-			int c = rn.nextInt(col);
-			if (this.maze[r][c] == 0) {
-				this.maze[r][c] = 5;
-				break;
-			}
-		}
-		
-		int prow, pcol;
-		while(true) {
-			int r = rn.nextInt(row);
-			int c = rn.nextInt(col);
-			if (this.maze[r][c] == 0) {
-				prow = r;
-				pcol = c;
-				break;
-			}
-		}
-		
-		level = new Level(this.maze, 0, prow, pcol, 0, this);
-		levels[0] = level;
-		
+		generateMaze();
 	}
 	
 	public Level[] getLevels() {
@@ -96,9 +71,13 @@ public class RandomPlayState extends State {
 	public void update() {
 		back.update();
 		play.update();
+		randomize.update();
+//		generateMaze();
+	}
+	
+	private void generateMaze() {
 		
-		int size = ThreadLocalRandom.current().nextInt(8,12);
-		maze = new int[size][size];
+		maze = new int[ThreadLocalRandom.current().nextInt(8,12)][ThreadLocalRandom.current().nextInt(8,12)];
 				
 		int row =  maze.length;
 		int col =  maze[0].length;
@@ -106,9 +85,19 @@ public class RandomPlayState extends State {
 		
 		for (int i = 0; i < row; i++) {
 			for (int j = 0; j < col; j++) {
-				int[] arr = {0, 1, 3};
-				int rnd = rn.nextInt(arr.length);
-				this.maze[i][j] = arr[rnd];
+				if (i == 0) {
+					this.maze[i][j] = 1;
+				} else if (j == 0) {
+					this.maze[i][j] = 1;
+				} else if (i == row -1) {
+					this.maze[i][j] = 1;
+				} else if (j == col -1) {
+					this.maze[i][j] = 1;
+				} else {
+					int[] arr = {0, 1, 3};
+					int rnd = rn.nextInt(arr.length);
+					this.maze[i][j] = arr[rnd];
+				}
 			}
 		}
 		
@@ -141,6 +130,7 @@ public class RandomPlayState extends State {
 		g.drawImage(Assets.backBG, 0, 0, null);
 		back.render(g);
 		play.render(g);
+		randomize.render(g);
 	}
 	
 	public int getNUMLEVEL() {

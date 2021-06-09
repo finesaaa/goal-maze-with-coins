@@ -29,3 +29,8 @@ Kelompok 4 KB F - Dini Adni Navastara, S.Kom, M.Sc.
 ![image](https://user-images.githubusercontent.com/57583780/121291278-30c8ea80-c912-11eb-96a8-1d49b896ee9a.png)
 ![image](https://user-images.githubusercontent.com/57583780/121291310-44745100-c912-11eb-8dde-5824400b5ba0.png)
 
+## Referensi
+- https://github.com/Manouchehri/Genetic-Algorithms-in-Java-Basics/blob/master/src/chapter4/GeneticAlgorithm.java
+- https://washifu.github.io/codeblog/pages/2017-10-12-Mario_Peach_Coins/
+- https://tonytruong.net/solving-a-2d-maze-game-using-a-genetic-algorithm-and-a-search-part-2/
+- https://www.geeksforgeeks.org/genetic-algorithms/
